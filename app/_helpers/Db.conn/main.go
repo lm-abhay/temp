@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
-	//sessions "github.com/kataras/go-sessions"
+	sessions "github.com/kataras/go-sessions"
 	//"golang.org/x/crypto/bcrypt"
 	 //"os"
 	 //"go get -u github.com/satori/go.uuid@master"
@@ -72,7 +72,7 @@ func checkErr(w http.ResponseWriter, r *http.Request, err error) bool {
 	return true
 }
 
-/*func QueryUser(username string) user {
+func QueryUser(username string) user {
 	var users = user{}
 	err = db.QueryRow(`
 		SELECT id, 
@@ -92,26 +92,26 @@ func checkErr(w http.ResponseWriter, r *http.Request, err error) bool {
 			&users.Email,
 		)
 	return users
-}*/
+}
 
 func register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		//http.ServeFile(w, r, "register.html")
+		http.ServeFile(w, r, "register.html")
 		return
 	}
-
+}
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	first_name := r.FormValue("first_name")
 	last_name := r.FormValue("last_name")
 	password := r.FormValue("password")
-	//fmt.Println(username)
-	//users := QueryUser(first_name)
+	fmt.Println(username)
+	users := QueryUser(first_name)
 
-	//if (user{}) == users {
-		//hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if (user{}) == users {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
-		//if len(hashedPassword) != 0 && checkErr(w, r, err) {
+		if len(hashedPassword) != 0 && checkErr(w, r, err) {
 			stmt, err := db.Prepare("INSERT INTO user SET username=?, password=?, first_name=?, last_name=?, email=?")
 			if err == nil {
 				_, err := stmt.Exec(&username, &password, &first_name, &last_name, &email)
@@ -124,14 +124,14 @@ func register(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(res)
 			}
 		} 
-		
-		/*else {
+	}	
+		else {
 		res := statusRes{Status: 400, Msg: "Method Must be post"}
 		json.NewEncoder(w).Encode(res)
-	}*/
+	}
 
 
-/*func login(w http.ResponseWriter, r *http.Request) {
+func login(w http.ResponseWriter, r *http.Request) {
 	session := sessions.Start(w, r)
 	if len(session.GetString("username")) != 0 && checkErr(w, r, err) {
 		//check session if avaliabel
@@ -171,4 +171,4 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	sessions.Destroy(w, r)
 	res := statusRes{Status: 200, Msg: "Successfull logout"}
 	json.NewEncoder(w).Encode(res)
-}*/
+}
